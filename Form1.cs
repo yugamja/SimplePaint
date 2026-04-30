@@ -51,6 +51,12 @@ namespace SimplePaint
             trbLineWidth.Value = 2;
             trbLineWidth.ValueChanged += trbLineWidth_ValueChanged;
 
+            // 파일 저장 이벤트 연결
+            btnSaveFile.Click += btnSaveFile_Click; 
+
+
+
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -162,6 +168,64 @@ namespace SimplePaint
         {
             currentLineWidth = trbLineWidth.Value;
         }
+
+
+        private void btnSaveFile_Click(object sender, EventArgs e)
+        {
+            if (canvasBitmap == null)
+            {
+                MessageBox.Show("저장할 그림이 없습니다.");
+                return;
+            }
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "PNG 파일 (*.png)|*.png|JPEG 파일 (*.jpg)|*.jpg|Bitmap 파일 (*.bmp)|*.bmp";
+            sfd.Title = "이미지 저장";
+            sfd.DefaultExt = "png";
+            sfd.AddExtension = true;
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                string ext = System.IO.Path.GetExtension(sfd.FileName).ToLower();
+                ImageFormat format;
+
+                switch (ext)
+                {
+                    case ".png":
+                        format = ImageFormat.Png;
+                        break;
+
+                    case ".jpg":
+                    case ".jpeg":
+                        format = ImageFormat.Jpeg;
+                        break;
+
+                    case ".bmp":
+                        format = ImageFormat.Bmp;
+                        break;
+
+                    default:
+                        MessageBox.Show("지원하지 않는 형식입니다.");
+                        return;
+                }
+
+                try
+                {
+                    canvasBitmap.Save(sfd.FileName, format);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("저장 실패: " + ex.Message);
+                }
+            }
+        }
+
+
+
+
+
+
+
 
     }
 }
